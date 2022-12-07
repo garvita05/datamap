@@ -5,6 +5,7 @@ import indiaJson from "./india.topo.json";
 
 class ChoroplethMap extends Component {
   componentDidMount() {
+    //console.log("Hello");
     // Datamaps expect data in format:
     // { "USA": { "fillColor": "#42a844", numberOfWhatever: 75},
     //   "FRA": { "fillColor": "#8dc386", numberOfWhatever: 43 } }
@@ -35,6 +36,37 @@ class ChoroplethMap extends Component {
       dataset[iso] = { numberOfThings: value, fillColor: paletteScale(value) };
     });
 
+    function showData(geo, data) {
+      // don't show tooltip if country don't present in dataset
+      //console.log(geo.properties.name);
+      if (!data) {
+        return;
+      }
+      // tooltip content
+      //showData(geo.propertis.name);
+      //console.log(geo.properties.name);
+      // var buffer = fetch("http://localhost:5000/city", {
+      //   city: geo.properties.name,
+      // })
+      //   .exec()
+      //   .then((data) => {
+      //     console.log(data);
+      //   })
+      //   .catch((err) => {
+      //     console.log("Error" + err);
+      //   });
+      return [
+        '<div class="hoverinfo">',
+        "<strong>",
+        geo.properties.name,
+        "</strong>",
+        "<br>PH: <strong>",
+        data.numberOfThings,
+        "</strong>",
+        "</div>",
+      ].join("");
+    }
+
     let map = new Datamap({
       element: document.getElementById("cloropleth_map"),
       scope: "india",
@@ -46,22 +78,39 @@ class ChoroplethMap extends Component {
         borderWidth: 0.5,
         dataJson: indiaJson,
         popupTemplate: function (geo, data) {
-          // don't show tooltip if country don't present in dataset
-          if (!data) {
-            return;
-          }
-          // tooltip content
-          return [
-            '<div class="hoverinfo">',
-            "<strong>",
-            geo.properties.name,
-            "</strong>",
-            "<br>PH: <strong>",
-            data.numberOfThings,
-            "</strong>",
-            "</div>",
-          ].join("");
+          console.log("hello");
+          showData(geo, data);
         },
+
+        // function (geo, data) {
+        //   // don't show tooltip if country don't present in dataset
+        //   if (!data) {
+        //     return;
+        //   }
+        //   // tooltip content
+        //   //showData(geo.propertis.name);
+        //   //console.log(geo.properties.name);
+        //   // var buffer = fetch("http://localhost:5000/city", {
+        //   //   city: geo.properties.name,
+        //   // })
+        //   //   .exec()
+        //   //   .then((data) => {
+        //   //     console.log(data);
+        //   //   })
+        //   //   .catch((err) => {
+        //   //     console.log("Error" + err);
+        //   //   });
+        //   return [
+        //     '<div class="hoverinfo">',
+        //     "<strong>",
+        //     geo.properties.name,
+        //     "</strong>",
+        //     "<br>PH: <strong>",
+        //     data.numberOfThings,
+        //     "</strong>",
+        //     "</div>",
+        //   ].join("");
+        // }
       },
       fills: {
         HIGH: "#afafaf",
@@ -83,13 +132,14 @@ class ChoroplethMap extends Component {
       },
     });
   }
+
   render() {
     return (
       <div
         id="cloropleth_map"
         style={{
-          height: "100%",
-          width: "100%",
+          height: "100vh",
+          width: "100vh",
         }}
       ></div>
     );
